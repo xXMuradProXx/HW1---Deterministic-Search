@@ -1,6 +1,9 @@
 import ex1
+import ex1_copy
 import search
 import time
+
+from custom_problems import custom_problems, tricky_problems, hard_problems, hard_large_problems
 from problems import non_comp_problems
 
 
@@ -64,7 +67,7 @@ def solve_problems(problems):
 			return None
 		timeout = 60
 		result = check_problem(
-			p, (lambda p: ex1.astar_search(p, p.h)), timeout)
+			p, (lambda p: ex1.astar_search2(p, p.h)), timeout)
 		print("A* ", result)
 		if result[2] != None:
 			if result[0] != -3:
@@ -76,6 +79,10 @@ def main():
 	"""Here goes the input you want to check"""
 
 	solve_problems(non_comp_problems)
+	solve_problems(custom_problems)
+	solve_problems(tricky_problems)
+	solve_problems(hard_problems)
+	solve_problems(hard_large_problems)
 
 
 if __name__ == '__main__':

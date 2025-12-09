@@ -1,5 +1,6 @@
 import ex1
 import ex1_copy
+import problems_revised
 import search
 import time
 
@@ -83,6 +84,7 @@ def main():
 	solve_problems(tricky_problems)
 	solve_problems(hard_problems)
 	solve_problems(hard_large_problems)
+	solve_problems(problems_revised.non_comp_problems)
 
 
 if __name__ == '__main__':

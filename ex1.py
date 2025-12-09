@@ -1,3 +1,5 @@
+import time as t
+
 import search
 import random
 import math
@@ -125,8 +127,8 @@ class RobotNavigationProblem(search.Problem):
 				curr_uneven = loc in self.uneven_floors
 				next_uneven = next_loc in self.uneven_floors
 
-				# Penalty applies if moving into or out of uneven floor
-				if curr_uneven != next_uneven:
+				# Penalty applies if moving into or out of uneven floor or both
+				if curr_uneven or next_uneven:
 					move_cost = self.uneven_penalty
 
 				move_damage = self.get_robovac_damage(next_loc, time + 1)  # Robovac damage after move
@@ -177,7 +179,7 @@ class RobotNavigationProblem(search.Problem):
 			next_uneven = next_loc in self.uneven_floors
 
 			# Penalty applies if moving into or out of uneven floor
-			if curr_uneven != next_uneven:
+			if curr_uneven or next_uneven:
 				move_cost = self.uneven_penalty
 
 			next_bat -= move_cost
@@ -215,6 +217,11 @@ def create_robot_navigation_problem(game):
 def astar_search(problem, heuristic):
 	"""A* search algorithm implementation."""
 
+	start_time = t.time() # Start time for timeout tracking
+
+	expansion_count = 0
+	MAX_EXPANSIONS = 150000  # Memory Limit Check
+
 	# Create the initial node
 	node = search.Node(problem.initial)
 
@@ -230,7 +237,15 @@ def astar_search(problem, heuristic):
 	reached = {problem.initial: node}
 
 	while frontier:
+		if t.time() - start_time > 60:
+			return None  # Timeout after 60 seconds
+
+		# We stop early if the search gets too big, avoiding the crash.
+		if expansion_count > MAX_EXPANSIONS:
+			return None
+
 		node = frontier.pop()
+		expansion_count += 1
 
 		if problem.goal_test(node.state):
 			return node
@@ -251,6 +266,12 @@ def astar_search2(problem, heuristic):
 	"""
 	A* Search using search.PriorityQueue with Battery Dominance Pruning.
 	"""
+
+	start_time = t.time() # Start time for timeout tracking
+
+	expansion_count = 0
+	MAX_EXPANSIONS = 150000  # Memory Limit Check
+
 	node = search.Node(problem.initial)
 	if problem.goal_test(node.state):
 		return node
@@ -270,7 +291,15 @@ def astar_search2(problem, heuristic):
 	reached_dominance[key0] = s0[1]
 
 	while frontier:
+		if t.time() - start_time > 60:
+			return None  # Timeout after 60 seconds
+
+		# We stop early if the search gets too big, avoiding the crash.
+		if expansion_count > MAX_EXPANSIONS:
+			return None
+
 		node = frontier.pop()
+		expansion_count += 1
 
 		if problem.goal_test(node.state):
 			return node
